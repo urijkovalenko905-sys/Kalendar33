@@ -16,7 +16,18 @@ import { useSwipeNavigation } from '../hooks/useSwipeNavigation';
 import { FunCalendarDashboard } from '../components/fun/FunCalendarDashboard';
 
 export const TodayPage: React.FC = () => {
-  const { data, isLoading, error, activeCategory, currentDate, fetchData, setActiveCategory } = useDayStore();
+  const {
+    data,
+    isLoading,
+    error,
+    activeCategory,
+    currentDate,
+    fetchData,
+    setActiveCategory,
+    randomizeCategory,
+    selections,
+    poolSizes,
+  } = useDayStore();
   const containerRef = useRef<HTMLDivElement>(null);
 
   useSwipeNavigation(containerRef);
@@ -36,21 +47,21 @@ export const TodayPage: React.FC = () => {
 
     switch (activeCategory) {
       case 'science':
-        return <ScienceCard data={data.science} dateKey={dateKey} dateObj={currentDate} />;
+        return <ScienceCard data={data.science} dateKey={dateKey} dateObj={currentDate} onRandomize={() => randomizeCategory('science')} currentIndex={selections.science} poolSize={poolSizes.science} />;
       case 'funFact':
-        return <FunFactCard data={data.funFact} dateKey={dateKey} dateObj={currentDate} />;
+        return <FunFactCard data={data.funFact} dateKey={dateKey} dateObj={currentDate} onRandomize={() => randomizeCategory('funFact')} currentIndex={selections.funFact} poolSize={poolSizes.funFact} />;
       case 'history':
-        return <HistoryCard data={data.history} dateKey={dateKey} dateObj={currentDate} />;
+        return <HistoryCard data={data.history} dateKey={dateKey} dateObj={currentDate} onRandomize={() => randomizeCategory('history')} currentIndex={selections.history} poolSize={poolSizes.history} />;
       case 'meme':
-        return <MemeCard data={data.meme} dateKey={dateKey} dateObj={currentDate} />;
+        return <MemeCard data={data.meme} dateKey={dateKey} dateObj={currentDate} onRandomize={() => randomizeCategory('meme')} currentIndex={selections.meme} poolSize={poolSizes.meme} />;
       case 'cinema':
-        return <CinemaCard data={data.cinema} dateKey={dateKey} dateObj={currentDate} />;
+        return <CinemaCard data={data.cinema} dateKey={dateKey} dateObj={currentDate} onRandomize={() => randomizeCategory('cinema')} currentIndex={selections.cinema} poolSize={poolSizes.cinema} />;
       case 'birthday':
-        return <BirthdaysCard data={data.birthdays} dateKey={dateKey} dateObj={currentDate} />;
+        return <BirthdaysCard data={data.birthdays} dateKey={dateKey} dateObj={currentDate} onRandomize={() => randomizeCategory('birthday')} currentIndex={selections.birthday} poolSize={poolSizes.birthday} />;
       case 'holiday':
-        return <HolidayCard data={data.holiday} dateKey={dateKey} dateObj={currentDate} />;
+        return <HolidayCard data={data.holiday} dateKey={dateKey} dateObj={currentDate} onRandomize={() => randomizeCategory('holiday')} currentIndex={selections.holiday} poolSize={poolSizes.holiday} />;
       case 'quote':
-        return <QuoteCard data={data.quote} dateKey={dateKey} dateObj={currentDate} />;
+        return <QuoteCard data={data.quote} dateKey={dateKey} dateObj={currentDate} onRandomize={() => randomizeCategory('quote')} currentIndex={selections.quote} poolSize={poolSizes.quote} />;
       default:
         return <EmptyState />;
     }

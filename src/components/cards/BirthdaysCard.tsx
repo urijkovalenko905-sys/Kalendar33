@@ -1,68 +1,87 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { GlassCard } from '../shared/GlassCard';
 import { ReactionBar } from '../shared/ReactionBar';
 import { ShareButton } from '../shared/ShareButton';
 import { FavoriteButton } from '../shared/FavoriteButton';
+import { RandomizeButton } from '../shared/RandomizeButton';
 import { Person } from '../../types/DayData';
 
 interface BirthdaysCardProps {
   data: Person[];
   dateKey: string;
   dateObj: Date;
+  onRandomize: () => void;
+  currentIndex: number;
+  poolSize: number;
 }
 
-export const BirthdaysCard: React.FC<BirthdaysCardProps> = ({ data, dateKey, dateObj }) => {
+export const BirthdaysCard: React.FC<BirthdaysCardProps> = ({
+  data,
+  dateKey,
+  dateObj,
+  onRandomize,
+  currentIndex,
+  poolSize,
+}) => {
   const categoryId = 'birthday';
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  
+
   return (
     <GlassCard category={categoryId} className="flex flex-col gap-4">
-      <div className="flex justify-between items-start">
-        <div className="px-3 py-1 rounded-full bg-[var(--accent-birthday)]/20 border border-[var(--accent-birthday)]/30 text-[var(--accent-birthday)] text-[10px] font-bold tracking-wider uppercase">
-          🎂 Именинники
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-wrap gap-2">
+          <div className="rounded-full border border-[var(--accent-birthday)]/30 bg-[var(--accent-birthday)]/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--accent-birthday)]">
+            🎂 Рождения этой даты
+          </div>
+          <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/70">
+            {data[0]?.occurredOnLabel ?? dateKey}
+          </div>
         </div>
-        <FavoriteButton 
-          card={{
-            id: `${dateKey}_${categoryId}`,
-            date: dateKey,
-            category: categoryId,
-            title: 'Именинники',
-            preview: data.map(p => p.name).join(', ').substring(0, 60) + '...',
-            savedAt: Date.now()
-          }} 
-        />
+        <div className="flex items-center gap-2">
+          <RandomizeButton onClick={onRandomize} currentIndex={currentIndex} poolSize={poolSize} />
+          <FavoriteButton
+            card={{
+              id: `${dateKey}_${categoryId}_${data.map((person) => person.id).join('-')}`,
+              date: dateKey,
+              category: categoryId,
+              title: data.map((person) => person.name).join(', '),
+              preview: data[0]?.summary.substring(0, 80) ?? 'Рождения этой даты',
+              savedAt: Date.now(),
+            }}
+          />
+        </div>
       </div>
 
-      <div className="mt-4 flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-4 pb-4">
-        {data.map((person, index) => {
-          const isExpanded = expandedId === person.name;
-          
+      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4">
+        {data.map((person) => {
+          const isExpanded = expandedId === person.id;
+
           return (
-            <motion.div 
-              key={person.name}
+            <motion.div
+              key={person.id}
               layout
-              onClick={() => setExpandedId(isExpanded ? null : person.name)}
-              className={`flex-shrink-0 snap-center rounded-2xl bg-white/5 border border-white/10 p-4 flex flex-col items-center text-center cursor-pointer transition-colors hover:bg-white/10 ${isExpanded ? 'w-[280px]' : 'w-[160px]'}`}
+              onClick={() => setExpandedId(isExpanded ? null : person.id)}
+              className={`flex-shrink-0 cursor-pointer snap-center rounded-2xl border border-white/10 bg-white/5 p-4 text-center transition-colors hover:bg-white/10 ${isExpanded ? 'w-[300px]' : 'w-[170px]'}`}
             >
-              <motion.img 
+              <motion.img
                 layout="position"
-                src={person.avatarUrl} 
-                alt={person.name} 
-                className="w-[72px] h-[72px] rounded-full object-cover border-2 border-[var(--accent-birthday)]/50 mb-3"
+                src={person.avatarUrl}
+                alt={person.name}
+                className="mx-auto mb-3 h-[76px] w-[76px] rounded-full border-2 border-[var(--accent-birthday)]/45 object-cover"
                 loading="lazy"
                 crossOrigin="anonymous"
               />
-              <motion.h3 layout="position" className="text-sm font-bold text-white mb-1 leading-tight">
+              <motion.h3 layout="position" className="mb-1 text-sm font-bold leading-tight text-white">
                 {person.name}
               </motion.h3>
-              <motion.div layout="position" className="text-[10px] text-white/50 uppercase tracking-widest font-bold mb-2">
+              <motion.div layout="position" className="mb-2 text-[10px] font-bold uppercase tracking-widest text-white/55">
                 {person.field}
               </motion.div>
-              <motion.div layout="position" className="text-xs text-[var(--accent-birthday)] font-mono mb-2">
-                {person.birthYear} — {person.deathYear || 'н.в.'}
+              <motion.div layout="position" className="text-xs font-mono text-[var(--accent-birthday)]">
+                родился {person.birthYear}
               </motion.div>
-              
+
               <AnimatePresence>
                 {isExpanded && (
                   <motion.div
@@ -71,16 +90,10 @@ export const BirthdaysCard: React.FC<BirthdaysCardProps> = ({ data, dateKey, dat
                     exit={{ opacity: 0, height: 0 }}
                     className="overflow-hidden"
                   >
-                    <div className="pt-3 mt-3 border-t border-white/10 text-xs text-white/80 leading-relaxed text-left">
-                      <div className="mb-2 font-bold text-white/60">{person.nationality}</div>
-                      <div className="mb-2">
-                        {person.isAlive ? (
-                          <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-[10px] uppercase font-bold">🎉 Ещё с нами!</span>
-                        ) : (
-                          <span className="px-2 py-1 bg-white/10 text-white/60 rounded text-[10px] uppercase font-bold">✨ В памяти навсегда</span>
-                        )}
-                      </div>
-                      <p className="italic mt-3">"{person.quirkyFact}"</p>
+                    <div className="mt-3 border-t border-white/10 pt-3 text-left text-xs leading-relaxed text-white/78">
+                      <div className="mb-2 font-bold text-white/55">{person.occurredOnLabel}</div>
+                      <p className="mb-2">{person.summary}</p>
+                      <div className="text-white/55">{person.nationality}</div>
                     </div>
                   </motion.div>
                 )}
@@ -90,8 +103,8 @@ export const BirthdaysCard: React.FC<BirthdaysCardProps> = ({ data, dateKey, dat
         })}
       </div>
 
-      <div className="flex items-center justify-between mt-2 pt-4 border-t border-white/5">
-        <ReactionBar dateKey={`${dateKey}_${categoryId}`} accentColor="var(--accent-birthday)" />
+      <div className="flex items-center justify-between border-t border-white/5 pt-4">
+        <ReactionBar dateKey={`${dateKey}_${categoryId}_${data.map((person) => person.id).join('-')}`} accentColor="var(--accent-birthday)" />
         <ShareButton cardData={data} category={categoryId} date={dateObj} />
       </div>
     </GlassCard>

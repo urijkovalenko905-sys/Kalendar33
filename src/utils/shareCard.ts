@@ -5,9 +5,8 @@ import { formatRussianDate } from './dateHelpers';
 export async function generateShareCard(
   cardData: any,
   category: CategoryId,
-  date: Date
+  date: Date,
 ): Promise<Blob> {
-  // Create a hidden container for the share card
   const container = document.createElement('div');
   container.style.position = 'absolute';
   container.style.left = '-9999px';
@@ -22,8 +21,7 @@ export async function generateShareCard(
   container.style.fontFamily = "'Raleway', sans-serif";
   container.style.color = '#fff';
   container.style.overflow = 'hidden';
-  
-  // Apply background gradient based on category
+
   const gradients: Record<CategoryId, string> = {
     science: 'linear-gradient(135deg, #0C0C1A 0%, #1A3A3A 100%)',
     funFact: 'linear-gradient(135deg, #0C0C1A 0%, #2A3A1A 100%)',
@@ -36,7 +34,6 @@ export async function generateShareCard(
   };
   container.style.background = gradients[category] || '#0C0C1A';
 
-  // Extract content based on category
   let headline = '';
   let body = '';
   let emoji = '';
@@ -44,72 +41,74 @@ export async function generateShareCard(
 
   switch (category) {
     case 'science':
-      headline = cardData.headline;
-      body = cardData.story.substring(0, 120) + '...';
+      headline = cardData.title;
+      body = cardData.summary;
       emoji = '🔬';
-      label = 'Наука';
+      label = 'Наука даты';
       break;
     case 'funFact':
       headline = cardData.punchline;
-      body = cardData.detail.substring(0, 120) + '...';
-      emoji = '😂';
-      label = 'Фан-факт';
+      body = cardData.detail;
+      emoji = '🌀';
+      label = 'Факт даты';
       break;
     case 'history':
       headline = cardData.title;
-      body = cardData.narrative.substring(0, 120) + '...';
+      body = cardData.narrative;
       emoji = '📜';
       label = 'История';
       break;
     case 'meme':
       headline = cardData.memeName;
-      body = cardData.originStory.substring(0, 120) + '...';
+      body = cardData.originStory;
       emoji = '🐣';
-      label = 'Мем дня';
+      label = 'Поп-культура';
       break;
     case 'cinema':
       headline = cardData.title;
-      body = cardData.funFact.substring(0, 120) + '...';
+      body = cardData.funFact;
       emoji = '🎬';
-      label = 'Кино';
+      label = 'Кино и музыка';
       break;
     case 'birthday':
-      headline = 'Именинники дня';
-      body = cardData.map((p: any) => p.name).join(', ');
+      headline = 'Рождения этой даты';
+      body = cardData.map((person: any) => `${person.name} (${person.birthYear})`).join(', ');
       emoji = '🎂';
-      label = 'Дни рождения';
+      label = 'Рождения';
       break;
     case 'holiday':
       headline = cardData.holidayName;
-      body = cardData.purpose.substring(0, 120) + '...';
+      body = cardData.purpose;
       emoji = '🌍';
-      label = 'Праздник';
+      label = 'Праздники';
       break;
     case 'quote':
-      headline = `«${cardData.quoteText.substring(0, 60)}...»`;
-      body = `— ${cardData.author}`;
-      emoji = '💡';
-      label = 'Цитата';
+      headline = cardData.author;
+      body = `${cardData.quoteText} ${cardData.context}`;
+      emoji = '🕯';
+      label = 'Память дня';
       break;
   }
 
+  const metaLine = cardData?.occurredOnLabel || formatRussianDate(date);
+
   container.innerHTML = `
     <div style="display: flex; flex-direction: column; gap: 24px;">
-      <div style="display: flex; align-items: center; gap: 8px; opacity: 0.8;">
+      <div style="display: flex; align-items: center; gap: 8px; opacity: 0.85;">
         <span style="font-size: 20px;">📅</span>
         <span style="font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Весёлый Календарь</span>
       </div>
-      
+
       <div style="display: inline-block; padding: 6px 12px; background: rgba(255,255,255,0.1); border-radius: 100px; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; align-self: flex-start; border: 1px solid rgba(255,255,255,0.2);">
-        ${formatRussianDate(date)}
+        ${metaLine}
       </div>
 
-      <h1 style="font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 32px; line-height: 1.2; margin: 0; letter-spacing: -1px;">
+      <h1 style="font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 31px; line-height: 1.2; margin: 0; letter-spacing: -1px;">
         ${headline}
       </h1>
 
-      <p style="font-size: 16px; line-height: 1.6; opacity: 0.9; margin: 0;">
-        ${body}
+      <p style="font-size: 16px; line-height: 1.55; opacity: 0.9; margin: 0;">
+        ${String(body).slice(0, 240)}
       </p>
     </div>
 
@@ -119,7 +118,7 @@ export async function generateShareCard(
         <span style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.8;">${label}</span>
       </div>
       <div style="font-size: 12px; opacity: 0.6; font-weight: 600; letter-spacing: 0.5px;">
-        t.me/vesely_kalendar_bot
+        ${formatRussianDate(date)}
       </div>
     </div>
   `;
@@ -133,11 +132,14 @@ export async function generateShareCard(
       logging: false,
       useCORS: true,
     });
-    
+
     return new Promise((resolve, reject) => {
       canvas.toBlob((blob) => {
-        if (blob) resolve(blob);
-        else reject(new Error('Failed to create blob'));
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error('Failed to create blob'));
+        }
       }, 'image/png');
     });
   } finally {

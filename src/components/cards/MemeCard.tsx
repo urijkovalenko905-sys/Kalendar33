@@ -3,82 +3,93 @@ import { GlassCard } from '../shared/GlassCard';
 import { ReactionBar } from '../shared/ReactionBar';
 import { ShareButton } from '../shared/ShareButton';
 import { FavoriteButton } from '../shared/FavoriteButton';
+import { RandomizeButton } from '../shared/RandomizeButton';
 import { MemeData } from '../../types/DayData';
 
 interface MemeCardProps {
   data: MemeData;
   dateKey: string;
   dateObj: Date;
+  onRandomize: () => void;
+  currentIndex: number;
+  poolSize: number;
 }
 
-export const MemeCard: React.FC<MemeCardProps> = ({ data, dateKey, dateObj }) => {
+export const MemeCard: React.FC<MemeCardProps> = ({
+  data,
+  dateKey,
+  dateObj,
+  onRandomize,
+  currentIndex,
+  poolSize,
+}) => {
   const categoryId = 'meme';
-  
+
   return (
     <GlassCard category={categoryId} className="flex flex-col gap-4">
-      <div className="flex justify-between items-start">
-        <div className="px-3 py-1 rounded-full bg-[var(--accent-meme)]/20 border border-[var(--accent-meme)]/30 text-[var(--accent-meme)] text-[10px] font-bold tracking-wider uppercase">
-          🐣 Мем дня
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-wrap gap-2">
+          <div className="rounded-full border border-[var(--accent-meme)]/30 bg-[var(--accent-meme)]/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--accent-meme)]">
+            🐣 Поп-культура даты
+          </div>
+          <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/70">
+            {data.occurredOnLabel}
+          </div>
         </div>
-        <FavoriteButton 
-          card={{
-            id: `${dateKey}_${categoryId}`,
-            date: dateKey,
-            category: categoryId,
-            title: data.memeName,
-            preview: data.originStory.substring(0, 60) + '...',
-            savedAt: Date.now()
-          }} 
-        />
+        <div className="flex items-center gap-2">
+          <RandomizeButton onClick={onRandomize} currentIndex={currentIndex} poolSize={poolSize} />
+          <FavoriteButton
+            card={{
+              id: `${dateKey}_${categoryId}_${data.id}`,
+              date: dateKey,
+              category: categoryId,
+              title: data.memeName,
+              preview: data.originStory.substring(0, 80),
+              savedAt: Date.now(),
+            }}
+          />
+        </div>
       </div>
 
-      <div className="mt-4">
-        <div className="relative rounded-2xl overflow-hidden border-2 border-white/10 shadow-2xl bg-black/50 aspect-video flex items-center justify-center">
-          <img 
-            src={data.imageUrl} 
-            alt={data.memeName} 
-            className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
+      <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+        <div className="relative aspect-video">
+          <img
+            src={data.imageUrl}
+            alt={data.memeName}
+            className="h-full w-full object-cover opacity-92"
             loading="lazy"
             crossOrigin="anonymous"
           />
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 flex justify-between items-end">
-            <h3 className="text-xl font-black text-white drop-shadow-md tracking-tight">{data.memeName}</h3>
-            <span className="text-sm font-bold text-[var(--accent-meme)] drop-shadow-md">{data.year}</span>
-          </div>
-          <div className="absolute top-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-md border border-white/20 text-xs font-bold text-white/90 uppercase tracking-widest">
-            {data.platform}
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-4">
+            <div className="text-xl font-black tracking-tight text-white">{data.memeName}</div>
+            <div className="mt-1 flex items-center justify-between text-sm text-white/75">
+              <span>{data.platform}</span>
+              <span>{data.year}</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-4 flex items-center gap-2">
-        <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${data.stillUsed ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/10 text-white/60 border border-white/20'}`}>
-          {data.stillUsed ? '✅ Живёт по сей день' : '👻 Легенда прошлого'}
+      <p className="text-body leading-relaxed text-white/82">{data.originStory}</p>
+
+      <div className="flex items-center gap-2">
+        <span className={`rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-wider ${data.stillUsed ? 'border-green-500/30 bg-green-500/15 text-green-400' : 'border-white/20 bg-white/5 text-white/55'}`}>
+          {data.stillUsed ? 'До сих пор узнаётся' : 'Исторический культурный момент'}
         </span>
       </div>
 
-      <div className="mt-4">
-        <h4 className="text-sm font-bold text-[var(--accent-meme)] uppercase tracking-wider mb-2">История создания:</h4>
-        <p className="text-body text-white/80 leading-relaxed">
-          {data.originStory}
-        </p>
-      </div>
-
       {data.relatedMemes.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-white/5">
-          <h4 className="text-xs text-white/50 uppercase tracking-widest font-bold mb-3">Связанные мемы:</h4>
-          <div className="flex flex-wrap gap-2">
-            {data.relatedMemes.map(meme => (
-              <span key={meme} className="px-3 py-1 bg-white/5 rounded-full border border-white/10 text-xs text-white/70 font-medium">
-                {meme}
-              </span>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-2">
+          {data.relatedMemes.map((item) => (
+            <span key={item} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
+              {item}
+            </span>
+          ))}
         </div>
       )}
 
-      <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
-        <ReactionBar dateKey={`${dateKey}_${categoryId}`} accentColor="var(--accent-meme)" />
+      <div className="flex items-center justify-between border-t border-white/5 pt-4">
+        <ReactionBar dateKey={`${dateKey}_${categoryId}_${data.id}`} accentColor="var(--accent-meme)" />
         <ShareButton cardData={data} category={categoryId} date={dateObj} />
       </div>
     </GlassCard>
