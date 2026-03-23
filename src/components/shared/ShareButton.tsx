@@ -18,28 +18,32 @@ export const ShareButton: React.FC<ShareButtonProps> = ({ cardData, category, da
   const handleShare = async () => {
     haptic.medium();
     setIsGenerating(true);
+
     try {
       const blob = await generateShareCard(cardData, category, date);
       const file = new File([blob], `share-${category}.png`, { type: 'image/png' });
-      
+
       if (navigator.share && navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
           title: 'Весёлый Календарь',
-          text: 'Смотри, что я нашел в Весёлом Календаре!',
+          text: 'Смотри, что я нашёл в Весёлом Календаре!',
         });
       } else {
-        // Fallback for environments that don't support Web Share API with files
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `share-${category}.png`;
-        a.click();
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `share-${category}.png`;
+        link.click();
         URL.revokeObjectURL(url);
       }
-    } catch (e) {
-      console.error('Error sharing:', e);
-      tg.showAlert('Не удалось создать картинку для шеринга.');
+    } catch (error) {
+      console.error('Error sharing:', error);
+      if (tg?.showAlert) {
+        tg.showAlert('Не удалось создать картинку для шеринга.');
+      } else {
+        window.alert('Не удалось создать картинку для шеринга.');
+      }
     } finally {
       setIsGenerating(false);
     }
