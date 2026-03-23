@@ -1,0 +1,261 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Raleway", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  /* === BASE SURFACES === */
+  --bg-base:        #0C0C1A;   /* deep space navy — never pure black */
+  --bg-surface:     #141425;   /* elevated card surfaces */
+  --bg-elevated:    #1C1C35;   /* modals, popovers */
+  --bg-overlay:     rgba(255, 255, 255, 0.04); /* glassmorphism fill */
+
+  /* === BORDERS === */
+  --border-default: rgba(255, 255, 255, 0.07);
+  --border-hover:   rgba(255, 255, 255, 0.14);
+  --border-active:  rgba(255, 255, 255, 0.22);
+
+  /* === TEXT === */
+  --text-primary:   #F0F0F8;
+  --text-secondary: #9898B8;
+  --text-tertiary:  #5A5A7A;
+  --text-disabled:  #3A3A5A;
+
+  /* === CATEGORY ACCENTS === */
+  --accent-science:  #4ECDC4;  /* teal — science */
+  --accent-fun:      #A8FF78;  /* neon lime — fun facts */
+  --accent-history:  #FFE66D;  /* golden — history */
+  --accent-meme:     #78FFD6;  /* cyan-mint — memes */
+  --accent-cinema:   #C471ED;  /* purple — cinema */
+  --accent-birthday: #FF6B6B;  /* coral — birthdays */
+  --accent-holiday:  #FFA07A;  /* peach-orange — holidays */
+  --accent-quote:    #B4A7FF;  /* soft lavender — quotes */
+
+  /* === SEMANTIC === */
+  --color-cta:      #FF6B6B;   /* primary CTA — coral red */
+  --color-success:  #4ECDC4;
+  --color-warning:  #FFE66D;
+  --color-danger:   #FF6B6B;
+
+  /* === GRADIENTS === */
+  --gradient-cinema:  linear-gradient(135deg, #C471ED 0%, #F64F59 100%);
+  --gradient-meme:    linear-gradient(135deg, #A8FF78 0%, #78FFD6 100%);
+  --gradient-fun:     linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+  --gradient-header-jan: linear-gradient(135deg, #1A237E 0%, #283593 100%);
+  --gradient-header-apr: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
+  --gradient-header-jul: linear-gradient(135deg, #E65100 0%, #F57C00 100%);
+  --gradient-header-oct: linear-gradient(135deg, #BF360C 0%, #E64A19 100%);
+  --gradient-header-dec: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%);
+  --gradient-fun-bg:
+    radial-gradient(circle at top left, rgba(255, 209, 102, 0.18), transparent 28%),
+    radial-gradient(circle at 85% 15%, rgba(120, 255, 214, 0.12), transparent 22%),
+    radial-gradient(circle at 50% 85%, rgba(196, 113, 237, 0.16), transparent 26%),
+    linear-gradient(180deg, #090916 0%, #111126 42%, #0c0c1a 100%);
+}
+
+body {
+  background: var(--gradient-fun-bg);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Display — hero headlines, year numbers */
+.text-display   { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 48px; line-height: 1.0; letter-spacing: -2px; }
+
+/* Heading 1 — section titles */
+.text-h1        { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 28px; line-height: 1.2; letter-spacing: -0.8px; }
+
+/* Heading 2 — card titles */
+.text-h2        { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 22px; line-height: 1.3; letter-spacing: -0.5px; }
+
+/* Heading 3 — sub-headers */
+.text-h3        { font-family: 'Nunito', sans-serif; font-weight: 600; font-size: 18px; line-height: 1.4; }
+
+/* Body — main content text */
+.text-body      { font-family: 'Raleway', sans-serif; font-weight: 400; font-size: 15px; line-height: 1.75; }
+
+/* Body bold */
+.text-body-bold { font-family: 'Raleway', sans-serif; font-weight: 700; font-size: 15px; line-height: 1.75; }
+
+/* Caption — small labels, dates */
+.text-caption   { font-family: 'Raleway', sans-serif; font-weight: 400; font-size: 12px; line-height: 1.5; letter-spacing: 0.5px; }
+
+/* Label — pill badges, tab labels */
+.text-label     { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 11px; line-height: 1.0; letter-spacing: 1.5px; text-transform: uppercase; }
+
+/* Mono — years, numbers, stats */
+.text-mono      { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; letter-spacing: 0px; }
+
+/* Quote — pull quotes */
+.text-quote     { font-family: 'Raleway', sans-serif; font-style: italic; font-weight: 600; font-size: 20px; line-height: 1.6; }
+
+/* === GLASSMORPHISM === */
+.glass-card {
+  background:    rgba(255, 255, 255, 0.04);
+  border:        1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+
+  /* Top edge inner highlight — makes it look lit from above */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.25);
+
+  padding: 22px 20px 20px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Accent variant — each category gets a tinted glass card */
+.glass-card--science  { border-color: rgba(78, 205, 196, 0.20); box-shadow: inset 0 1px 0 rgba(78, 205, 196, 0.15), 0 8px 32px rgba(0,0,0,0.25), 0 0 40px rgba(78, 205, 196, 0.04); }
+.glass-card--history  { border-color: rgba(255, 230, 109, 0.20); box-shadow: inset 0 1px 0 rgba(255, 230, 109, 0.15), 0 8px 32px rgba(0,0,0,0.25), 0 0 40px rgba(255, 230, 109, 0.04); }
+.glass-card--cinema   { border-color: rgba(196, 113, 237, 0.20); box-shadow: inset 0 1px 0 rgba(196, 113, 237, 0.15), 0 8px 32px rgba(0,0,0,0.25), 0 0 40px rgba(196, 113, 237, 0.04); }
+.glass-card--birthday { border-color: rgba(255, 107, 107, 0.20); box-shadow: inset 0 1px 0 rgba(255, 107, 107, 0.15), 0 8px 32px rgba(0,0,0,0.25), 0 0 40px rgba(255, 107, 107, 0.04); }
+.glass-card--funFact  { border-color: rgba(168, 255, 120, 0.20); box-shadow: inset 0 1px 0 rgba(168, 255, 120, 0.15), 0 8px 32px rgba(0,0,0,0.25), 0 0 40px rgba(168, 255, 120, 0.04); }
+.glass-card--meme     { border-color: rgba(120, 255, 214, 0.20); box-shadow: inset 0 1px 0 rgba(120, 255, 214, 0.15), 0 8px 32px rgba(0,0,0,0.25), 0 0 40px rgba(120, 255, 214, 0.04); }
+.glass-card--holiday  { border-color: rgba(255, 160, 122, 0.20); box-shadow: inset 0 1px 0 rgba(255, 160, 122, 0.15), 0 8px 32px rgba(0,0,0,0.25), 0 0 40px rgba(255, 160, 122, 0.04); }
+.glass-card--quote    { border-color: rgba(180, 167, 255, 0.20); box-shadow: inset 0 1px 0 rgba(180, 167, 255, 0.15), 0 8px 32px rgba(0,0,0,0.25), 0 0 40px rgba(180, 167, 255, 0.04); }
+
+/* Decorative top-left corner accent blob */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  left: -20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--card-accent-color, rgba(255,255,255,0.1));
+  opacity: 0.06;
+  filter: blur(30px);
+  pointer-events: none;
+}
+
+/* === ANIMATIONS === */
+@keyframes todayPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(255, 107, 107, 0.0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 0%,
+    rgba(255,255,255,0.10) 50%,
+    rgba(255,255,255,0.04) 100%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 12px;
+}
+
+@keyframes hueRotate {
+  0% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(15deg); }
+  100% { filter: hue-rotate(0deg); }
+}
+
+.animate-hue-rotate {
+  animation: hueRotate 8s ease-in-out infinite;
+}
+
+@keyframes blobFloat {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(8px, -10px, 0) scale(1.06); }
+}
+
+.fun-hero-card {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04)),
+    radial-gradient(circle at top right, rgba(255, 209, 102, 0.18), transparent 22%),
+    radial-gradient(circle at bottom left, rgba(120, 255, 214, 0.14), transparent 25%);
+}
+
+.fun-hero-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(14px);
+  opacity: 0.7;
+  animation: blobFloat 7s ease-in-out infinite;
+}
+
+.fun-hero-orb--one {
+  top: -18px;
+  right: 12px;
+  width: 84px;
+  height: 84px;
+  background: rgba(255, 209, 102, 0.22);
+}
+
+.fun-hero-orb--two {
+  left: -8px;
+  bottom: 28px;
+  width: 66px;
+  height: 66px;
+  background: rgba(120, 255, 214, 0.18);
+  animation-delay: -2s;
+}
+
+.fun-stat-card {
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 14px;
+}
+
+.fun-progress-bar {
+  background: linear-gradient(90deg, #ffd166 0%, #4ecdc4 50%, #c471ed 100%);
+}
+
+.fun-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  padding: 0 16px;
+  color: white;
+  background: rgba(255,255,255,0.05);
+  font-weight: 700;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.fun-action-button:hover {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.08);
+}
+
+.fun-action-button--primary {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.92), rgba(255, 209, 102, 0.88));
+  border-color: rgba(255,255,255,0.22);
+  color: #111;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
